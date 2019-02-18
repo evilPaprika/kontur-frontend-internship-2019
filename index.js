@@ -1,39 +1,30 @@
 const { getAllFilePathsWithExtension, readFile } = require('./fileSystem');
 const { readLine } = require('./console');
-const {
-    handleExit,
-    handleShow,
-    handleImportant,
-    handleUser,
-    handleSort,
-    handleDate,
-    handleHelp
-} = require('./commandHandlers');
+const commentsParser = require('./commentsParser');
+const commandHandlers = require('./commandHandlers');
 
 const handlerSwitch = {
-    exit: handleExit,
-    show: handleShow,
-    important: handleImportant,
-    user: handleUser,
-    sort: handleSort,
-    date: handleDate,
-    help: handleHelp
+    exit: commandHandlers.handleExit,
+    show: commandHandlers.handleShow,
+    important: commandHandlers.handleImportant,
+    user: commandHandlers.handleUser,
+    sort: commandHandlers.handleSort,
+    date: commandHandlers.handleDate,
+    help: commandHandlers.handleHelp
 };
 
-const parsedComments = [];
+const parsedComments = commentsParser.getParsed(getFiles());
 
 app();
 
 function app() {
-    const files = getFiles();
-    parseComments(files);
+    console.log(parsedComments);
     console.log('Please, write your command!');
     readLine(processCommand);
 }
 
 function getFiles() {
     const filePaths = getAllFilePathsWithExtension(process.cwd(), 'js');
-    console.log(filePaths);
     return filePaths.map(path => readFile(path));
 }
 
@@ -46,12 +37,4 @@ function processCommand(command) {
     }
 }
 
-function parseComments() {
-    const filePaths = getAllFilePathsWithExtension(process.cwd(), 'js');
-    for (const path of filePaths) {
-        const file = readFile(path);
-        const comments = /^(?:[^"]|"[^"]*")*?(\/\/ TODO.*)/gim.exec(file);
-        console.log(comments);
-    }
-}
 // TODO you can do it!
