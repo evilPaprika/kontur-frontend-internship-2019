@@ -27,7 +27,7 @@ function handleUser(comments, username) {
 }
 
 function handleSort(comments, sortField) {
-    if (!sortField) {
+    if (!sortField || !sortMethods.hasOwnProperty(sortField)) {
         console.log(
             'Please, specify sort method like this: sort {importance | user | date}'
         );

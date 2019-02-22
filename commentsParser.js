@@ -25,8 +25,7 @@ function parseComments(text) {
     return commentObjects;
 }
 
-function makeCommentObject(parsed) {
-    const [, , user, date, comment] = parsed;
+function makeCommentObject([, , user, date, comment]) {
     return {
         user: user || '',
         date: date || '',
