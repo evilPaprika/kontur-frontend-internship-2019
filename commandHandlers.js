@@ -9,7 +9,7 @@ function handleShow(comments) {
 }
 
 function handleImportant(comments) {
-    printTable(comments.filter(comment => Boolean(comment.importance)));
+    printTable(comments.filter(({ importance }) => Boolean(importance)));
 }
 
 function handleUser(comments, username) {
@@ -19,7 +19,7 @@ function handleUser(comments, username) {
     }
     printTable(
         comments.filter(
-            comment => comment.user.toUpperCase() === username.toUpperCase()
+            ({ user }) => user.toUpperCase() === username.toUpperCase()
         )
     );
 }
@@ -46,38 +46,26 @@ function handleDate(comments, date) {
     printTable(comments.filter(comment => comment.date >= date));
 }
 
-const handlerSwitch = {
-    exit: handleExit,
-    show: handleShow,
-    important: handleImportant,
-    user: handleUser,
-    sort: handleSort,
-    date: handleDate
+const header = {
+    importance: 1,
+    user: 'user',
+    date: 'date',
+    comment: 'comment',
+    fileName: 'fileName'
 };
 
 function printTable(comments) {
     const intervals = findOutColumnsIntervals(comments);
     console.log(
-        tableLine(1, 'user', 'date', 'comment', 'fileName', intervals) +
+        tableLine(header, intervals) +
             dashLine(intervals) +
-            comments
-                .map(({ importance, user, date, comment, fileName }) =>
-                    tableLine(
-                        importance,
-                        user,
-                        date,
-                        comment,
-                        fileName,
-                        intervals
-                    )
-                )
-                .join('') +
+            comments.map(comment => tableLine(comment, intervals)).join('') +
             dashLine(intervals)
     );
 }
 
-function tableLine(important, user, date, comment, fileName, intervals) {
-    return `  ${important ? '!' : ' '}  \
+function tableLine({ importance, user, date, comment, fileName }, intervals) {
+    return `  ${importance ? '!' : ' '}  \
 |  ${chopAndPad(user, intervals.user)}  \
 |  ${chopAndPad(date, intervals.date)}  \
 |  ${chopAndPad(comment, intervals.comment)}  \
@@ -114,14 +102,11 @@ function findOutColumnsIntervals(comments) {
         fileName: 8
     };
 
-    for (const comment of comments) {
-        intervals.user = Math.max(intervals.user, comment.user.length);
-        intervals.date = Math.max(intervals.date, comment.date.length);
-        intervals.comment = Math.max(intervals.comment, comment.comment.length);
-        intervals.fileName = Math.max(
-            intervals.fileName,
-            comment.fileName.length
-        );
+    for (const { user, date, comment, fileName } of comments) {
+        intervals.user = Math.max(intervals.user, user.length);
+        intervals.date = Math.max(intervals.date, date.length);
+        intervals.comment = Math.max(intervals.comment, comment.length);
+        intervals.fileName = Math.max(intervals.fileName, fileName.length);
     }
 
     intervals.user = Math.min(intervals.user, 10);
@@ -131,6 +116,15 @@ function findOutColumnsIntervals(comments) {
 
     return intervals;
 }
+
+const handlerSwitch = {
+    exit: handleExit,
+    show: handleShow,
+    important: handleImportant,
+    user: handleUser,
+    sort: handleSort,
+    date: handleDate
+};
 
 module.exports = {
     handlerSwitch
