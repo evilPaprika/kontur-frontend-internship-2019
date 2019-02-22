@@ -6,7 +6,6 @@ const { expect } = chai;
 let proc;
 const exec = path.join(__dirname, '../..', 'index.js');
 
-
 describe('Команда show', () => {
     before(() => {
         process.chdir(__dirname);
@@ -16,7 +15,7 @@ describe('Команда show', () => {
         proc = child.exec('node ' + exec);
     });
 
-    it('должен показывать список todo', (done) => {
+    it('должен показывать список todo', done => {
         const result = `
   !  |  user      |  date        |  comment              |  fileName       
 ---------------------------------------------------------------------------
@@ -26,18 +25,12 @@ describe('Команда show', () => {
 ---------------------------------------------------------------------------
 `.trim();
 
-        proc.stdout.once('data', function(){
+        proc.stdout.once('data', function() {
             proc.stdin.write('show\r');
-            proc.stdout.once('data', function(output){
+            proc.stdout.once('data', function(output) {
                 expect(output.toString('utf-8').trim()).to.eq(result);
                 done();
             });
         });
     });
 });
-
-
-
-
-
-
